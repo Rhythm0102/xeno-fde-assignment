@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Tenant {
+  id            String   @id @default(uuid())
+  shopifyDomain String   @unique
+  accessToken   String
+  shopName      String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  products      Product[]
+  customers     Customer[]
+  orders        Order[]
+}
+
+model Product {
+  id          String   @id // Shopify Product ID
+  tenantId    String
+  title       String
+  bodyHtml    String?
+  vendor      String?
+  productType String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId])
+}
+
+model Customer {
+  id          String   @id // Shopify Customer ID
+  tenantId    String
+  email       String?
+  firstName   String?
+  lastName    String?
+  ordersCount Int      @default(0)
+  totalSpent  String?  // Stored as string to avoid precision issues, or Decimal
+  currency    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  orders      Order[]
+
+  @@index([tenantId])
+}
+
+model Order {
+  id          String   @id // Shopify Order ID
+  tenantId    String
+  customerId  String?
+  orderNumber Int?
+  totalPrice  String?
+  currency    String?
+  financialStatus String?
+  createdAt   DateTime @default(now()) // Order creation date from Shopify
+  processedAt DateTime?
+
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  customer    Customer? @relation(fields: [customerId], references: [id])
+
+  @@index([tenantId])
+  @@index([customerId])
+}

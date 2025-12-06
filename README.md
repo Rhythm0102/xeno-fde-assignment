@@ -162,19 +162,6 @@ npx prisma migrate dev --name init
 - Backend default: 4000 - Change via `PORT` env variable
 - Frontend default: 3000 - Change via `npm run dev -- -p 3001`
 
-## Deployment
-
-### Deploy on Vercel
-See [VERCEL_DEPLOYMENT.md](./VERCEL_DEPLOYMENT.md) for detailed deployment instructions.
-
-Quick steps:
-1. Push code to GitHub
-2. Go to https://vercel.com and import your repository
-3. Add environment variables (Shopify credentials, Database URL)
-4. Deploy - Frontend and Backend will automatically deploy
-
-For production, use PostgreSQL instead of SQLite database.
-
 ## License
 
 ISC
